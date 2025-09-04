@@ -1,14 +1,18 @@
 import threading
 
 def thread_function_1():
+    thread_sum = 0
     for i in range(500):
-        print(f"Thread_1: {i}\n")
+        thread_sum += i
+        print(f'[Thread_1] Iter: {i} Sum: {thread_sum}\n')
 
 def thread_function_2():
+    thread_sum = 0
     for i in range(500):
-        print(f"Thread_2: {i}\n")
+        thread_sum += i
+        print(f'[Thread_2] Iter: {i} Sum: {thread_sum}\n')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     thread1 = threading.Thread(target=thread_function_1)
     thread2 = threading.Thread(target=thread_function_2)
 
@@ -20,4 +24,3 @@ if __name__ == "__main__":
 
     print("Both threads have finished execution.")
 
-    
