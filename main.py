@@ -1,3 +1,5 @@
+# Дмитренко В.О (КІ-33)
+
 import threading
 
 def thread_function_1():
