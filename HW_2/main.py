@@ -1,62 +1,57 @@
 import random
 import math
 import time
-import threading
+import multiprocessing as mp
 import matplotlib.pyplot as plt
 
-def count_pi(n, results, index):
-    counter = 0
 
+def count_pi(n):
+    counter = 0
     for _ in range(n):
-        x = random.uniform(a=-1, b=1)
-        y = random.uniform(a=-1, b=1)
+        x = random.uniform(-1, 1)
+        y = random.uniform(-1, 1)
         if x**2 + y**2 <= 1:
             counter += 1
-    results[index] = counter
+    return counter
 
-def tread_function(n, number_of_threads):
+
+def process_function(n, number_of_processes):
     time_start = time.time()
-    point_for_thread = n // number_of_threads
-    threads = []
-    results = [0] * number_of_threads
+    points_per_process = n // number_of_processes
 
-    for _ in range(number_of_threads):
-        thread = threading.Thread(target=count_pi, args=(point_for_thread, results, i))
-        threads.append(thread)
-        thread.start()
-
-    for thread in threads:
-        thread.join()
+    with mp.Pool(number_of_processes) as pool:
+        results = pool.map(count_pi, [points_per_process] * number_of_processes)
 
     total = sum(results)
     pi = 4 * total / n
-
     time_end = time.time()
 
-    time_result = time_end - time_start
+    return {'pi': pi, 'time': time_end - time_start}
 
-    return {'pi': pi, 'time': time_result}
 
 def plotting(x, y):
     plt.plot(x, y, marker='o')
-    plt.xlabel('Number of Threads')
+    plt.xlabel('Number of Processes')
     plt.ylabel('Time (seconds)')
     plt.xticks(x)
-    plt.yticks(y)
-    plt.title('Time vs Number of Threads for Pi Calculation')
+    plt.title('Time vs Number of Processes for Pi Calculation')
     plt.grid(True)
     plt.show()
 
+
 if __name__ == '__main__':
-    treads = (2, 4, 8, 16, 32, 64)
+    processes = (2, 4, 8, 16, 32)
     times = []
 
     print(f'Target value: {math.pi}\n')
 
-    for i in treads:
-        result = tread_function(1_000_000_0, i)
+    for p in processes:
+        result = process_function(10_000_000, p)
         times.append(result['time'])
-        print(f'Number of threads: {i} -> {result["pi"]} Time: {result["time"]} sec')
+        print(f'Number of processes: {p} -> {result["pi"]} Time: {result["time"]:.4f} sec')
 
-    plotting(treads, times)
+    plotting(processes, times)
 
+#Multiprocessing у Python справді пришвидшує обчислювальні задачі (на відміну від threading),
+# але ефективність росте лише до кількості, близької до числа фізичних ядер CPU.
+# Подальше збільшення кількості процесів не тільки не дає виграшу, а й може погіршити час через витрати на управління процесами.
