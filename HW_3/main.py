@@ -29,8 +29,8 @@ def run_with_processes(n: int, processes: int):
     print("=" * 50)
 
 def main():
-    n = 1_000_000
-    for processes in [1, 2, 4, 8, 12]:
+    n = 10_000_000
+    for processes in [8]:
         run_with_processes(n, processes)
 
 if __name__ == "__main__":
